@@ -6,9 +6,10 @@ const { check } = require("express-validator");
 router.post(
   "/registration",
   [
-    check("uname", "Имя пользователя не может быть пустым").notEmpty(),
-    check("password", "Пароль должен быть больше 3 символов").isLength({
-      min: 4,
+    check("phone", "Номер телефона не может быть пустым").notEmpty(),
+    check("uname", "ФИО не может быть пустым").notEmpty(),
+    check("password", "Пароль должен быть не меньше 8 и не больше 20 символов").isLength({
+      min: 8,
       max: 20
     }),
   ],
