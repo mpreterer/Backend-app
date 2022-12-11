@@ -21,7 +21,7 @@ class authController {
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Ошибка регистрации", errors });
       }
-      const { phone, password, uname } = req.body;
+      const { phone, password, uname, roles } = req.body;
       const candiate = await User.findOne({ phone });
       if (candiate) {
         return res
@@ -30,6 +30,14 @@ class authController {
       }
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({ value: "User" });
+      const checkAdmin = await Role.findOne({ value: "Admin" });
+
+      if (roles === checkAdmin.value) {
+        return res
+          .status(400)
+          .json({ message: "В системе может быть только 1 начальник" });
+      }
+
       const user = new User({
         uname,
         phone,
