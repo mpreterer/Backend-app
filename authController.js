@@ -30,13 +30,6 @@ class authController {
       }
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({ value: "User" });
-      const checkAdmin = await Role.findOne({ value: "Admin" });
-
-      if (roles === checkAdmin.value) {
-        return res
-          .status(400)
-          .json({ message: "В системе может быть только 1 начальник" });
-      }
 
       const user = new User({
         uname,
