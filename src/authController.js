@@ -1,5 +1,6 @@
 const User = require("./models/User.js");
 const Role = require("./models/Role.js");
+const Guest = require("./models/Guest.js");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
@@ -52,7 +53,38 @@ class authController {
 
   async login(req, res) {
     try {
-      const { phone, password } = req.body;
+      const { phone, password, guest, login } = req.body;
+
+      if (guest === 1) {
+        const tokenGuest = generateAccessToken(login);
+        const roleGuest = await Role.findOne({ value: "Guest" });
+
+        const user = new Guest({
+          login,
+          role: roleGuest.value,
+        });
+
+        await user.save();
+
+        return res.json({
+          result: 0,
+          description: "OK",
+          username: login,
+          access_token: tokenGuest,
+          expires_in: 5999,
+          user: 0,
+          macs: [
+            {
+              mac: "50:ff:20:6e:31:84",
+              confirm: 1,
+            },
+            {
+              mac: "50:ff:20:6e:31:83",
+              confirm: 0,
+            },
+          ],
+        });
+      }
 
       const user = await User.findOne({ phone });
       if (!user) {
@@ -72,7 +104,8 @@ class authController {
       const token = generateAccessToken(user._id, user.role);
       let userCode = 0;
 
-      if (user.role === "Admin") userCode = 1;
+      if (user.role === "Admin") userCode = 2;
+      if (user.role === "User") userCode = 1;
 
       return res.json({
         result: 0,
