@@ -29,6 +29,6 @@ router.post(
   controller.registaration
 );
 router.post("/login", controller.login);
-router.get("/users", roleMiddleWare(['Admin']), controller.getUsers);
+router.get("/workerList", roleMiddleWare('Admin'), controller.workerList);
 
 module.exports = router;

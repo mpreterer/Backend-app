@@ -73,6 +73,7 @@ class authController {
           access_token: tokenGuest,
           expires_in: 5999,
           user: 0,
+          user_id: user._id,
           macs: [
             {
               mac: "50:ff:20:6e:31:84",
@@ -114,7 +115,17 @@ class authController {
         access_token: token,
         expires_in: 5999,
         user: userCode,
-        mac: "Тут добавить",
+        user_id: user._id,
+        macs: [
+          {
+            mac: "50:ff:20:6e:31:84",
+            confirm: 1,
+          },
+          {
+            mac: "50:ff:20:6e:31:83",
+            confirm: 0,
+          },
+        ],
       });
     } catch (e) {
       res.status(400).json("login error");
@@ -122,10 +133,10 @@ class authController {
     }
   }
 
-  async getUsers(req, res) {
+  async workerList(req, res) {
     try {
       const users = await User.find();
-      res.json(users);
+      res.json({result: 0, description: "OK", list: users});
       res.json("server ok");
     } catch (e) {
       console.log(e);

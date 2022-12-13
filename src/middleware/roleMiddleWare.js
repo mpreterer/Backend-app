@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { secret } = require("../config");
 
-module.exports = function (setedRole) {
+module.exports = function (role) {
   return function (req, res, next) {
     if (req.method === "OPTIONS") {
       next();
@@ -12,10 +12,10 @@ module.exports = function (setedRole) {
       if (!token) {
         return res.status(403).json({ message: "Пользователь не авторизован" });
       }
-      const { setedRole: userRole } = jwt.verify(token, secret);
+      const { role: userRole } = jwt.verify(token, secret);
       let hasRole = false;
       
-      if (userRole.value === setedRole) hasRole = true;
+      if (userRole === role) hasRole = true;
       if (!hasRole) {
         return res.status(403).json({ message: "У вас нет доступа" });
       }
