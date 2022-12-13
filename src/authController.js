@@ -16,6 +16,10 @@ const generateAccessToken = (id, role) => {
 };
 
 class authController {
+  constructor() {
+    this.mac;
+  }
+  
   async registaration(req, res) {
     try {
       const errors = validationResult(req);
@@ -143,10 +147,18 @@ class authController {
     }
   }
 
-  async logout(req, res) {
+  async online(req, res) {
     try {
-    } catch (e) {}
+      const { mac, user_id, alert } = req.body;
+
+      const user = await User.findOne({ _id });
+
+    } catch (e) {
+      console.log(e);
+    }
   }
+
+
 }
 
 module.exports = new authController();

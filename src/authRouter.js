@@ -9,10 +9,6 @@ router.post(
   "/registration",
   [
     check("phone", "Номер телефона не может быть пустым").notEmpty(),
-    check("phone", "Введите правильно номер телефона").isLength({
-      min: 10,
-      max: 10,
-    }),
     check("uname", "ФИО не может быть пустым").notEmpty(),
     check("uname", "ФИО должно быть не меньше 6 и не больше 50 символов").isLength({
       min: 6,
