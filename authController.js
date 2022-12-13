@@ -5,10 +5,10 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./config");
 
-const generateAccessToken = (id, roles) => {
+const generateAccessToken = (id, role) => {
   const payload = {
     id,
-    roles,
+    role,
   };
 
   return jwt.sign(payload, secret, { expiresIn: "24h" });
@@ -21,25 +21,29 @@ class authController {
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Ошибка регистрации", errors });
       }
-      const { phone, password, uname, roles } = req.body;
+      const { phone, password, uname } = req.body;
       const candiate = await User.findOne({ phone });
       if (candiate) {
         return res
           .status(400)
-          .json({ message: "Данный номер уже зарегистрирован" });
+          .json({ result: 1, description: "Данный номер уже зарегистрирован" });
       }
       const hashPassword = bcrypt.hashSync(password, 7);
-      const userRole = await Role.findOne({ value: "User" });
+      let userRole = await Role.findOne({ value: "User" });
 
       const user = new User({
         uname,
         phone,
         password: hashPassword,
-        roles: [userRole.value],
+        role: userRole.value,
       });
 
       await user.save();
-      return res.json({ message: "Пользователь успешно зарегистрирован" });
+      return res.json({
+        message: `Пользователь успешно зарегистрирован`,
+        result: 0,
+        description: "OK",
+      });
     } catch (e) {
       res.status(400).json("Registration error");
       console.log(e);
@@ -49,21 +53,36 @@ class authController {
   async login(req, res) {
     try {
       const { phone, password } = req.body;
+
       const user = await User.findOne({ phone });
       if (!user) {
-        return res
-          .status(400)
-          .json({ message: `Номер телефона или пароль неверный` });
+        return res.status(400).json({
+          result: 2,
+          description: "Номер телефона или пароль неверный",
+        });
       }
 
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
-        return res
-          .status(400)
-          .json({ message: `Номер телефона или пароль неверный` });
+        return res.status(400).json({
+          result: 2,
+          description: "Номер телефона или пароль неверный",
+        });
       }
-      const token = generateAccessToken(user._id, user.roles);
-      return res.json({ token });
+      const token = generateAccessToken(user._id, user.role);
+      let userCode = 0;
+
+      if (user.role === "Admin") userCode = 1;
+
+      return res.json({
+        result: 0,
+        description: "OK",
+        username: user.uname,
+        access_token: token,
+        expires_in: 5999,
+        user: userCode,
+        mac: "Тут добавить",
+      });
     } catch (e) {
       res.status(400).json("login error");
       console.log(e);
@@ -78,6 +97,11 @@ class authController {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  async logout(req, res) {
+    try {
+    } catch (e) {}
   }
 }
 
