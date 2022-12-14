@@ -58,9 +58,9 @@ class authController {
         resMacs.push({ mac: el.mac });
       });
 
-      const date = new Date().toLocaleString() || [];
+      const date = new Date().toLocaleString();
       let reditDate = date.split(".");
-      let reditTime = date.split(".")[2].slice(6, 11);
+      let reditTime = date.split(".")[2].substr(6, 11);
 
       if (guest === 1) {
         const roleGuest = await Role.findOne({ value: "Guest" });
