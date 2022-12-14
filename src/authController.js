@@ -58,7 +58,10 @@ class authController {
       const year = date.getFullYear();
       const day = date.getDate();
       const month = date.getMonth() + 1;
-      const reditTime = `${date.getHours()}:${date.getMinutes()}`;
+      const reditTime = date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
       macs.forEach((el) => {
         resMacs.push({ mac: el.mac });
@@ -178,7 +181,10 @@ class authController {
       const year = date.getFullYear();
       const day = date.getDate();
       const month = date.getMonth() + 1;
-      const reditTime = `${date.getHours()}:${date.getMinutes()}`;
+      const reditTime = date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
       let user = await User.findOne({ _id: id_user });
 
@@ -215,7 +221,10 @@ class authController {
       const year = date.getFullYear();
       const day = date.getDate();
       const month = date.getMonth() + 1;
-      const reditTime = `${date.getHours()}:${date.getMinutes()}`;
+      const reditTime = date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
       if (!user) {
         return res.json({ result: 3, description: "Не авторизован" });
