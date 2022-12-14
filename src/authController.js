@@ -60,6 +60,7 @@ class authController {
 
       const date = new Date().toLocaleString() || [];
       let reditDate = date.split(".");
+      let year = reditDate[2].split(",")[0];
       let reditTime = date.split(",")[1];
 
       if (guest === 1) {
@@ -71,7 +72,7 @@ class authController {
           login,
           role: roleGuest.value,
           status: "online",
-          date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
+          date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
         });
 
         await user.save();
@@ -113,7 +114,7 @@ class authController {
 
       await user.updateOne({
         status: "online",
-        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
+        date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
       });
 
       return res.json({
@@ -173,6 +174,7 @@ class authController {
       const hasMac = await Macs.findOne({ mac: mac });
       const date = new Date().toLocaleString() || [];
       const reditDate = date.split(".");
+      const year = reditDate[2].split(",")[0];
       const reditTime = date.split(",")[1];
 
       let user = await User.findOne({ _id: id_user });
@@ -184,7 +186,7 @@ class authController {
       if (hasMac) {
         await user.updateOne({
           status: hasMac.confirm == 1 ? "alert" : "online",
-          date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
+          date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
         });
 
         return res.json({ result: 0, description: "OK" });
@@ -192,7 +194,7 @@ class authController {
 
       await user.updateOne({
         status: "offline",
-        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
+        date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
       });
       return res.json({ result: 3, description: "Не авторизован" });
     } catch (e) {
@@ -207,6 +209,7 @@ class authController {
       const user = jwt.verify(token, secret);
       const date = new Date().toLocaleString() || [];
       const reditDate = date.split(".");
+      const year = reditDate[2].split(",")[0];
       const reditTime = date.split(",")[1];
       if (!user) {
         return res.json({ result: 3, description: "Не авторизован" });
@@ -224,7 +227,7 @@ class authController {
 
       await userInfo.updateOne({
         status: "offline",
-        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
+        date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
       });
 
       return res.json({ result: 0, description: "OK" });
