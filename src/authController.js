@@ -1,10 +1,11 @@
 const User = require("./models/User.js");
 const Role = require("./models/Role.js");
 const Guest = require("./models/Guest.js");
+const Macs = require("./models/Macs.js");
 const bcrypt = require("bcryptjs");
-const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./config");
+const macs = require("./utils/macs");
 
 const generateAccessToken = (id, role) => {
   const payload = {
@@ -16,16 +17,8 @@ const generateAccessToken = (id, role) => {
 };
 
 class authController {
-  constructor() {
-    this.mac;
-  }
-  
   async registaration(req, res) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ message: "Ошибка регистрации", errors });
-      }
       const { phone, password, uname } = req.body;
       const candiate = await User.findOne({ phone });
       if (candiate) {
@@ -41,16 +34,17 @@ class authController {
         phone,
         password: hashPassword,
         role: userRole.value,
+        status: "",
+        date: "",
       });
 
       await user.save();
       return res.json({
-        message: `Пользователь успешно зарегистрирован`,
         result: 0,
         description: "OK",
       });
     } catch (e) {
-      res.status(400).json("Registration error");
+      res.status(400).json({ description: "Ошибка регистрации" });
       console.log(e);
     }
   }
@@ -58,6 +52,16 @@ class authController {
   async login(req, res) {
     try {
       const { phone, password, guest, login } = req.body;
+      const macs = await Macs.find();
+      const resMacs = [];
+
+      macs.forEach((el) => {
+        resMacs.push({ mac: el.mac, confirm: el.confirm });
+      });
+
+      const date = new Date().toLocaleString();
+      const reditDate = date.split(".");
+      const reditTime = date.split(".")[2].slice(6, 11);
 
       if (guest === 1) {
         const tokenGuest = generateAccessToken(login);
@@ -66,6 +70,11 @@ class authController {
         const user = new Guest({
           login,
           role: roleGuest.value,
+          status: "online",
+          date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
+            0,
+            4
+          )} ${reditTime}`,
         });
 
         await user.save();
@@ -78,16 +87,7 @@ class authController {
           expires_in: 5999,
           user: 0,
           user_id: user._id,
-          macs: [
-            {
-              mac: "50:ff:20:6e:31:84",
-              confirm: 1,
-            },
-            {
-              mac: "50:ff:20:6e:31:83",
-              confirm: 0,
-            },
-          ],
+          macs: resMacs,
         });
       }
 
@@ -110,7 +110,17 @@ class authController {
       let userCode = 0;
 
       if (user.role === "Admin") userCode = 2;
-      if (user.role === "User") userCode = 1;
+      if (user.role === "User") {
+        userCode = 1;
+      }
+
+      await user.updateOne({
+        status: "online",
+        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
+          0,
+          4
+        )} ${reditTime}`,
+      });
 
       return res.json({
         result: 0,
@@ -120,19 +130,10 @@ class authController {
         expires_in: 5999,
         user: userCode,
         user_id: user._id,
-        macs: [
-          {
-            mac: "50:ff:20:6e:31:84",
-            confirm: 1,
-          },
-          {
-            mac: "50:ff:20:6e:31:83",
-            confirm: 0,
-          },
-        ],
+        macs: resMacs,
       });
     } catch (e) {
-      res.status(400).json("login error");
+      res.status(400).json({ description: "Ошибка авторизации" });
       console.log(e);
     }
   }
@@ -140,8 +141,7 @@ class authController {
   async workerList(req, res) {
     try {
       const users = await User.find();
-      res.json({result: 0, description: "OK", list: users});
-      res.json("server ok");
+      res.json({ result: 0, description: "OK", list: users });
     } catch (e) {
       console.log(e);
     }
@@ -149,16 +149,42 @@ class authController {
 
   async online(req, res) {
     try {
-      const { mac, user_id, alert } = req.body;
+      const { mac, id_user, alert } = req.body;
+      const hasMac = await Macs.findOne({ mac: mac });
+      const date = new Date().toLocaleString();
+      const reditDate = date.split(".");
+      const reditTime = date.split(".")[2].slice(6, 11);
 
-      const user = await User.findOne({ _id });
+      let user = await User.findOne({ _id: id_user });
 
+      if (!user) {
+        user = await Guest.findOne({ _id: id_user });
+      }
+
+      if (hasMac) {
+        await user.updateOne({
+          status: alert === 1 ? "alert" : "online",
+          date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
+            0,
+            4
+          )} ${reditTime}`,
+        });
+
+        return res.json({ result: 0, description: "OK" });
+      }
+
+      await user.updateOne({
+        status: alert === 1 ? "alert" : "offline",
+        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
+          0,
+          4
+        )} ${reditTime}`,
+      });
+      return res.json({ result: 3, description: "Не авторизован" });
     } catch (e) {
       console.log(e);
     }
   }
-
-
 }
 
 module.exports = new authController();
