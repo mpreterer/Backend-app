@@ -133,7 +133,7 @@ class authController {
         macs: resMacs,
       });
     } catch (e) {
-      res.status(400).json({ description: "Ошибка авторизации" });
+      res.status(400).json({ errors: e, description: "Ошибка авторизации" });
       console.log(e);
     }
   }
@@ -185,6 +185,7 @@ class authController {
       return res.json({ result: 3, description: "Не авторизован" });
     } catch (e) {
       console.log(e);
+      return res.json({ errors: e, description: "Не авторизован" });
     }
   }
 
@@ -221,7 +222,7 @@ class authController {
       return res.json({ result: 0, description: "OK" });
     } catch (e) {
       console.log(e);
-      return res.status(400).json({ result: 3, description: "Не авторизован" });
+      return res.status(400).json({ errors: e, description: "Не авторизован" });
     }
   }
 }
