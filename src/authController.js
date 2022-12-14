@@ -141,7 +141,9 @@ class authController {
   async workerList(req, res) {
     try {
       const users = await User.find();
-      res.json({ result: 0, description: "OK", list: users });
+      const guests = await Guest.find();
+
+      res.json({ result: 0, description: "OK", list: [...users, ...guests] });
     } catch (e) {
       console.log(e);
     }
@@ -195,7 +197,7 @@ class authController {
       const reditTime = date.split(".")[2].slice(6, 11);
 
       if (!user) {
-        return res.json({ result: 3, description: "Не авторизован", qwe: secret });
+        return res.json({ result: 3, description: "Не авторизован" });
       }
 
       let userInfo = await User.findOne({ id: user._id });

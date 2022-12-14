@@ -10,6 +10,7 @@ app.use("/auth", authRouter);
 
 const start = async () => {
   try {
+    mongoose.set('strictQuery', true);
     await mongoose.connect("mongodb+srv://user:user1234@cluster0.qgytpnx.mongodb.net/?retryWrites=true&w=majority");
     app.listen(PORT, () => console.log(`CONNECT ${PORT}`));
   } catch (e) {
