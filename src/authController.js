@@ -49,6 +49,11 @@ class authController {
   }
 
   async login(req, res) {
+    const date = new Date().toLocaleString() || [];
+    const reditDate = date.split(".");
+    const year = reditDate[2].split(",")[0];
+    const reditTime = date.split(",")[1];
+
     try {
       const { phone, password, guest, login } = req.body;
       const macs = await Macs.find();
@@ -57,11 +62,6 @@ class authController {
       macs.forEach((el) => {
         resMacs.push({ mac: el.mac });
       });
-
-      const date = new Date().toLocaleString() || [];
-      let reditDate = date.split(".");
-      let year = reditDate[2].split(",")[0];
-      let reditTime = date.split(",")[1];
 
       if (guest === 1) {
         const roleGuest = await Role.findOne({ value: "Guest" });
