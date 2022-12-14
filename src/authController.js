@@ -158,7 +158,7 @@ class authController {
 
       guests.forEach((el) => {
         arrayGuest.push({
-          username: el.username,
+          username: el.login,
           status: el.status,
           user: 0,
           user_id: el._id,
