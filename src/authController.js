@@ -173,10 +173,12 @@ class authController {
     try {
       const { mac, id_user } = req.body;
       const hasMac = await Macs.findOne({ mac: mac });
-      const date = new Date().toLocaleString() || [];
-      const reditDate = date.split(".");
-      const year = reditDate[2].split(",")[0];
-      const reditTime = date.split(",")[1];
+
+      const date = new Date();
+      const year = date.getFullYear();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const reditTime = `${date.getHours()}:${date.getMinutes()}`;
 
       let user = await User.findOne({ _id: id_user });
 
@@ -187,7 +189,7 @@ class authController {
       if (hasMac) {
         await user.updateOne({
           status: hasMac.confirm == 1 ? "alert" : "online",
-          date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
+          date: `${day}-${month}-${year} ${reditTime}`,
         });
 
         return res.json({ result: 0, description: "OK" });
@@ -195,7 +197,7 @@ class authController {
 
       await user.updateOne({
         status: "offline",
-        date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
+        date: `${day}-${month}-${year} ${reditTime}`,
       });
       return res.json({ result: 3, description: "Не авторизован" });
     } catch (e) {
@@ -208,10 +210,13 @@ class authController {
     try {
       const token = req.headers.authorization.split(" ")[1];
       const user = jwt.verify(token, secret);
-      const date = new Date().toLocaleString() || [];
-      const reditDate = date.split(".");
-      const year = reditDate[2].split(",")[0];
-      const reditTime = date.split(",")[1];
+
+      const date = new Date();
+      const year = date.getFullYear();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const reditTime = `${date.getHours()}:${date.getMinutes()}`;
+
       if (!user) {
         return res.json({ result: 3, description: "Не авторизован" });
       }
@@ -228,7 +233,7 @@ class authController {
 
       await userInfo.updateOne({
         status: "offline",
-        date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
+        date: `${day}-${month}-${year} ${reditTime}`,
       });
 
       return res.json({ result: 0, description: "OK" });
