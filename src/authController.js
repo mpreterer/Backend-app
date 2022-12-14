@@ -5,7 +5,6 @@ const Macs = require("./models/Macs.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./config");
-const macs = require("./utils/macs");
 
 const generateAccessToken = (id, role) => {
   const payload = {
@@ -141,6 +140,7 @@ class authController {
   async workerList(req, res) {
     try {
       const users = await User.find();
+      const token = req.headers.authorization.split(" ")[1];
       res.json({ result: 0, description: "OK", list: users });
     } catch (e) {
       console.log(e);
@@ -149,7 +149,7 @@ class authController {
 
   async online(req, res) {
     try {
-      const { mac, id_user, alert } = req.body;
+      const { mac, id_user } = req.body;
       const hasMac = await Macs.findOne({ mac: mac });
       const date = new Date().toLocaleString();
       const reditDate = date.split(".");
@@ -163,7 +163,7 @@ class authController {
 
       if (hasMac) {
         await user.updateOne({
-          status: alert === 1 ? "alert" : "online",
+          status: hasMac.confirm == 1 ? "alert" : "online",
           date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
             0,
             4
@@ -174,13 +174,22 @@ class authController {
       }
 
       await user.updateOne({
-        status: alert === 1 ? "alert" : "offline",
+        status: "offline",
         date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
           0,
           4
         )} ${reditTime}`,
       });
       return res.json({ result: 3, description: "Не авторизован" });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async logout(req, res) {
+    try {
+      const { mac, id_user } = req.body;
+      
     } catch (e) {
       console.log(e);
     }
