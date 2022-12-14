@@ -26,7 +26,7 @@ class authController {
           .json({ result: 1, description: "Данный номер уже зарегистрирован" });
       }
       const hashPassword = bcrypt.hashSync(password, 7);
-      let userRole = await Role.findOne({ value: "Admin" });
+      let userRole = await Role.findOne({ value: "User" });
 
       const user = new User({
         uname,
