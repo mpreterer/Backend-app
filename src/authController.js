@@ -58,7 +58,7 @@ class authController {
       const year = date.getFullYear();
       const day = date.getDate();
       const month = date.getMonth() + 1;
-      const reditTime = date.toLocaleTimeString([], {
+      const reditTime = date.toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
       });
@@ -174,22 +174,22 @@ class authController {
 
   async online(req, res) {
     try {
-      const { mac, id_user } = req.body;
+      const { mac, user_id } = req.body;
       const hasMac = await Macs.findOne({ mac: mac });
 
       const date = new Date();
       const year = date.getFullYear();
       const day = date.getDate();
       const month = date.getMonth() + 1;
-      const reditTime = date.toLocaleTimeString([], {
+      const reditTime = date.toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
       });
 
-      let user = await User.findOne({ _id: id_user });
+      let user = await User.findOne({ _id: user_id });
 
       if (!user) {
-        user = await Guest.findOne({ _id: id_user });
+        user = await Guest.findOne({ _id: user_id });
       }
 
       if (hasMac) {
@@ -205,7 +205,7 @@ class authController {
         status: "offline",
         date: `${day}-${month}-${year} ${reditTime}`,
       });
-      return res.json({ result: 3, description: "Не авторизован" });
+      return res.json({ result: 3, description: "Не авторизован", mac: hasMac });
     } catch (e) {
       console.log(e);
       return res.json({ description: "Не авторизован" });
@@ -221,7 +221,7 @@ class authController {
       const year = date.getFullYear();
       const day = date.getDate();
       const month = date.getMonth() + 1;
-      const reditTime = date.toLocaleTimeString([], {
+      const reditTime = date.toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
       });
