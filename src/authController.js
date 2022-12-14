@@ -51,7 +51,8 @@ class authController {
   async login(req, res) {
     const date = new Date().toLocaleString() || [];
     const reditDate = date.split(".");
-    const year = reditDate[2].split(",")[0];
+    const yearArr = reditDate[2];
+    const yearRes = yearArr.split(",");
     const reditTime = date.split(",")[1];
 
     try {
@@ -72,7 +73,7 @@ class authController {
           login,
           role: roleGuest.value,
           status: "online",
-          date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
+          date: `${reditDate[0]}-${reditDate[1]}-${yearRes[0]} ${reditTime}`,
         });
 
         await user.save();
@@ -114,7 +115,7 @@ class authController {
 
       await user.updateOne({
         status: "online",
-        date: `${reditDate[0]}-${reditDate[1]}-${year} ${reditTime}`,
+        date: `${reditDate[0]}-${reditDate[1]}-${yearRes[0]} ${reditTime}`,
       });
 
       return res.json({
