@@ -55,7 +55,7 @@ class authController {
       const resMacs = [];
 
       macs.forEach((el) => {
-        resMacs.push({ mac: el.mac, confirm: el.confirm });
+        resMacs.push({ mac: el.mac });
       });
 
       const date = new Date().toLocaleString();
@@ -63,8 +63,9 @@ class authController {
       const reditTime = date.split(".")[2].slice(6, 11);
 
       if (guest === 1) {
-        const tokenGuest = generateAccessToken(login);
         const roleGuest = await Role.findOne({ value: "Guest" });
+        const userGuest = await Guest.findOne({ login: login });
+        const tokenGuest = generateAccessToken(userGuest._id, roleGuest.value);
 
         const user = new Guest({
           login,
@@ -140,7 +141,6 @@ class authController {
   async workerList(req, res) {
     try {
       const users = await User.find();
-      const token = req.headers.authorization.split(" ")[1];
       res.json({ result: 0, description: "OK", list: users });
     } catch (e) {
       console.log(e);
@@ -188,10 +188,38 @@ class authController {
 
   async logout(req, res) {
     try {
-      const { mac, id_user } = req.body;
-      
+      const token = req.headers.authorization.split(" ")[1];
+      const user = jwt.verify(token, secret);
+      const date = new Date().toLocaleString();
+      const reditDate = date.split(".");
+      const reditTime = date.split(".")[2].slice(6, 11);
+
+      if (!user) {
+        return res.json({ result: 3, description: "Не авторизован", qwe: secret });
+      }
+
+      let userInfo = await User.findOne({ id: user._id });
+
+      if (!userInfo) {
+        userInfo = await Guest.findOne({ id: user._id });
+      }
+
+      if (!userInfo) {
+        return res.json({ result: 3, description: "Не авторизован" });
+      }
+
+      await userInfo.updateOne({
+        status: "offline",
+        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
+          0,
+          4
+        )} ${reditTime}`,
+      });
+
+      return res.json({ result: 0, description: "OK" });
     } catch (e) {
       console.log(e);
+      return res.status(400).json({ result: 3, description: "Не авторизован" });
     }
   }
 }
