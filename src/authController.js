@@ -53,12 +53,12 @@ class authController {
       const { phone, password, guest, login } = req.body;
       const macs = await Macs.find();
       const resMacs = [];
-      
-      const date = new Date().toLocaleString() || [];
-      const reditDate = date.split(".");
-      const yearArr = reditDate[2];
-      const yearRes = yearArr.split(",");
-      const reditTime = date.split(",")[1];
+
+      const date = new Date();
+      const year = date.getFullYear();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const reditTime = `${date.getHours()}:${date.getMinutes()}`;
 
       macs.forEach((el) => {
         resMacs.push({ mac: el.mac });
@@ -73,7 +73,7 @@ class authController {
           login,
           role: roleGuest.value,
           status: "online",
-          date: `${reditDate[0]}-${reditDate[1]}-${yearRes[0]} ${reditTime}`,
+          date: `${day}-${month}-${year} ${reditTime}`,
         });
 
         await user.save();
@@ -115,7 +115,7 @@ class authController {
 
       await user.updateOne({
         status: "online",
-        date: `${reditDate[0]}-${reditDate[1]}-${yearRes[0]} ${reditTime}`,
+        date: `${day}-${month}-${year} ${reditTime}`,
       });
 
       return res.json({
