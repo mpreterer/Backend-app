@@ -166,7 +166,7 @@ class authController {
         });
       });
 
-      res.json({ result: 0, description: "OK", list: [...users, ...guests] });
+      res.json({ result: 0, description: "OK", list: [...arrayUser, ...arrayGuest] });
     } catch (e) {
       console.log(e);
     }
