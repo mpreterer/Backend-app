@@ -58,9 +58,9 @@ class authController {
         resMacs.push({ mac: el.mac });
       });
 
-      const date = new Date().toLocaleString().toString();
-      const reditDate = date.split(".");
-      const reditTime = date.split(".")[2].slice(6, 11);
+      const date = new Date().toLocaleString() || [];
+      let reditDate = date.split(".");
+      let reditTime = date.split(".")[2].slice(6, 11);
 
       if (guest === 1) {
         const roleGuest = await Role.findOne({ value: "Guest" });
@@ -177,7 +177,7 @@ class authController {
     try {
       const { mac, id_user } = req.body;
       const hasMac = await Macs.findOne({ mac: mac });
-      const date = new Date().toLocaleString().toString();
+      const date = new Date().toLocaleString() || [];
       const reditDate = date.split(".");
       const reditTime = date.split(".")[2].slice(6, 11);
 
@@ -217,7 +217,7 @@ class authController {
     try {
       const token = req.headers.authorization.split(" ")[1];
       const user = jwt.verify(token, secret);
-      const date = new Date().toLocaleString().toString();
+      const date = new Date().toLocaleString() || [];
       const reditDate = date.split(".");
       const reditTime = date.split(".")[2].slice(6, 11);
 
