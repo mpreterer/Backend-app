@@ -71,10 +71,7 @@ class authController {
           login,
           role: roleGuest.value,
           status: "online",
-          date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
-            0,
-            4
-          )} ${reditTime}`,
+          date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
         });
 
         await user.save();
@@ -116,10 +113,7 @@ class authController {
 
       await user.updateOne({
         status: "online",
-        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
-          0,
-          4
-        )} ${reditTime}`,
+        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
       });
 
       return res.json({
@@ -190,10 +184,7 @@ class authController {
       if (hasMac) {
         await user.updateOne({
           status: hasMac.confirm == 1 ? "alert" : "online",
-          date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
-            0,
-            4
-          )} ${reditTime}`,
+          date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
         });
 
         return res.json({ result: 0, description: "OK" });
@@ -201,10 +192,7 @@ class authController {
 
       await user.updateOne({
         status: "offline",
-        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
-          0,
-          4
-        )} ${reditTime}`,
+        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
       });
       return res.json({ result: 3, description: "Не авторизован" });
     } catch (e) {
@@ -236,10 +224,7 @@ class authController {
 
       await userInfo.updateOne({
         status: "offline",
-        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].slice(
-          0,
-          4
-        )} ${reditTime}`,
+        date: `${reditDate[0]}-${reditDate[1]}-${reditDate[2].split(',')[0]} ${reditTime}`,
       });
 
       return res.json({ result: 0, description: "OK" });
