@@ -58,9 +58,9 @@ class authController {
         resMacs.push({ mac: el.mac });
       });
 
-      const date = new Date().toLocaleString();
+      const date = new Date().toLocaleString() || [];
       let reditDate = date.split(".");
-      let reditTime = date.split(".")[2].substr(6, 11);
+      let reditTime = date.split(",")[1];
 
       if (guest === 1) {
         const roleGuest = await Role.findOne({ value: "Guest" });
@@ -179,7 +179,7 @@ class authController {
       const hasMac = await Macs.findOne({ mac: mac });
       const date = new Date().toLocaleString() || [];
       const reditDate = date.split(".");
-      const reditTime = date.split(".")[2].slice(6, 11);
+      const reditTime = date.split(",")[1];
 
       let user = await User.findOne({ _id: id_user });
 
@@ -219,8 +219,7 @@ class authController {
       const user = jwt.verify(token, secret);
       const date = new Date().toLocaleString() || [];
       const reditDate = date.split(".");
-      const reditTime = date.split(".")[2].slice(6, 11);
-
+      const reditTime = date.split(",")[1];
       if (!user) {
         return res.json({ result: 3, description: "Не авторизован" });
       }
