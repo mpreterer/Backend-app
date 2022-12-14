@@ -147,7 +147,7 @@ class authController {
 
       users.forEach((el) => {
         arrayUser.push({
-          username: el.username,
+          username: el.uname,
           status: el.status,
           phone: el.phone,
           user: el.role === "User" ? 1 : 2,
