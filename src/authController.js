@@ -166,7 +166,11 @@ class authController {
         });
       });
 
-      res.json({ result: 0, description: "OK", list: [...arrayUser, ...arrayGuest] });
+      res.json({
+        result: 0,
+        description: "OK",
+        list: [...arrayUser, ...arrayGuest],
+      });
     } catch (e) {
       console.log(e);
     }
@@ -205,7 +209,10 @@ class authController {
         status: "offline",
         date: `${day}-${month}-${year} ${reditTime}`,
       });
-      return res.json({ result: 3, description: "Не авторизован", mac: hasMac });
+      return res.json({
+        result: hasMac.confirm == 1 ? 4 : 3,
+        description: hasMac.confirm == 1 ? "alert" : "Не авторизован",
+      });
     } catch (e) {
       console.log(e);
       return res.json({ description: "Не авторизован" });
