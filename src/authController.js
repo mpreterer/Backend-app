@@ -49,16 +49,16 @@ class authController {
   }
 
   async login(req, res) {
-    const date = new Date().toLocaleString() || [];
-    const reditDate = date.split(".");
-    const yearArr = reditDate[2];
-    const yearRes = yearArr.split(",");
-    const reditTime = date.split(",")[1];
-
     try {
       const { phone, password, guest, login } = req.body;
       const macs = await Macs.find();
       const resMacs = [];
+      
+      const date = new Date().toLocaleString() || [];
+      const reditDate = date.split(".");
+      const yearArr = reditDate[2];
+      const yearRes = yearArr.split(",");
+      const reditTime = date.split(",")[1];
 
       macs.forEach((el) => {
         resMacs.push({ mac: el.mac });
