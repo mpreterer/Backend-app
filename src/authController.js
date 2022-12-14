@@ -69,17 +69,17 @@ class authController {
 
       if (guest === 1) {
         const roleGuest = await Role.findOne({ value: "Guest" });
-        const userGuest = await Guest.findOne({ login: login });
-        const tokenGuest = generateAccessToken(userGuest._id, roleGuest.value);
 
         const user = new Guest({
-          login,
+          login: login,
           role: roleGuest.value,
           status: "online",
           date: `${day}-${month}-${year} ${reditTime}`,
         });
 
         await user.save();
+
+        const tokenGuest = generateAccessToken(user._id, roleGuest.value);
 
         return res.json({
           result: 0,
