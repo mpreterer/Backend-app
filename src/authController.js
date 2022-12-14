@@ -26,7 +26,7 @@ class authController {
           .json({ result: 1, description: "Данный номер уже зарегистрирован" });
       }
       const hashPassword = bcrypt.hashSync(password, 7);
-      let userRole = await Role.findOne({ value: "User" });
+      let userRole = await Role.findOne({ value: "Admin" });
 
       const user = new User({
         uname,
@@ -142,6 +142,30 @@ class authController {
     try {
       const users = await User.find();
       const guests = await Guest.find();
+
+      const arrayUser = [];
+      const arrayGuest = [];
+
+      users.forEach((el) => {
+        arrayUser.push({
+          username: el.username,
+          status: el.status,
+          phone: el.phone,
+          user: el.role === "User" ? 1 : 2,
+          user_id: el._id,
+          date: el.date,
+        });
+      });
+
+      guests.forEach((el) => {
+        arrayGuest.push({
+          username: el.username,
+          status: el.status,
+          user: 0,
+          user_id: el._id,
+          date: el.date,
+        });
+      });
 
       res.json({ result: 0, description: "OK", list: [...users, ...guests] });
     } catch (e) {
