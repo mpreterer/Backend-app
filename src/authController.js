@@ -58,7 +58,7 @@ class authController {
         resMacs.push({ mac: el.mac });
       });
 
-      const date = new Date().toLocaleString();
+      const date = new Date().toLocaleString().toString();
       const reditDate = date.split(".");
       const reditTime = date.split(".")[2].slice(6, 11);
 
@@ -133,7 +133,7 @@ class authController {
         macs: resMacs,
       });
     } catch (e) {
-      res.status(400).json({ errors: e, description: "Ошибка авторизации" });
+      res.status(400).json({ description: "Ошибка авторизации" });
       console.log(e);
     }
   }
@@ -177,7 +177,7 @@ class authController {
     try {
       const { mac, id_user } = req.body;
       const hasMac = await Macs.findOne({ mac: mac });
-      const date = new Date().toLocaleString();
+      const date = new Date().toLocaleString().toString();
       const reditDate = date.split(".");
       const reditTime = date.split(".")[2].slice(6, 11);
 
@@ -209,7 +209,7 @@ class authController {
       return res.json({ result: 3, description: "Не авторизован" });
     } catch (e) {
       console.log(e);
-      return res.json({ errors: e, description: "Не авторизован" });
+      return res.json({ description: "Не авторизован" });
     }
   }
 
@@ -217,7 +217,7 @@ class authController {
     try {
       const token = req.headers.authorization.split(" ")[1];
       const user = jwt.verify(token, secret);
-      const date = new Date().toLocaleString();
+      const date = new Date().toLocaleString().toString();
       const reditDate = date.split(".");
       const reditTime = date.split(".")[2].slice(6, 11);
 
@@ -246,7 +246,7 @@ class authController {
       return res.json({ result: 0, description: "OK" });
     } catch (e) {
       console.log(e);
-      return res.status(400).json({ errors: e, description: "Не авторизован" });
+      return res.status(400).json({ description: "Не авторизован" });
     }
   }
 }
