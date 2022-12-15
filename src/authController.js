@@ -197,12 +197,16 @@ class authController {
       }
 
       if (hasMac) {
+        const statusUser = hasMac.confirm == 1 ? "alert" : "online";
         await user.updateOne({
-          status: hasMac.confirm == 1 ? "alert" : "online",
+          status: statusUser,
           date: `${day}-${month}-${year} ${reditTime}`,
         });
 
-        return res.json({ result: 0, description: "OK" });
+        return res.json({
+          result: 0,
+          description: statusUser,
+        });
       }
 
       await user.updateOne({
