@@ -196,21 +196,20 @@ class authController {
         user = await Guest.findOne({ _id: user_id });
       }
 
-      if (hasMac) {
-        const statusUser = hasMac.confirm == 0 ? "alert" : "online";
+      if (hasMac && hasMac.confirm === 1) {
         await user.updateOne({
-          status: statusUser,
+          status: "online",
           date: `${day}-${month}-${year} ${reditTime}`,
         });
 
         return res.json({
           result: 0,
-          description: statusUser,
+          description: "online",
         });
       }
 
       await user.updateOne({
-        status: "offline",
+        status: hasMac.confirm == 0 ? "alert" : "offline",
         date: `${day}-${month}-${year} ${reditTime}`,
       });
       return res.json({
