@@ -197,7 +197,7 @@ class authController {
       }
 
       if (hasMac) {
-        const statusUser = hasMac.confirm == 1 ? "alert" : "online";
+        const statusUser = hasMac.confirm == 0 ? "alert" : "online";
         await user.updateOne({
           status: statusUser,
           date: `${day}-${month}-${year} ${reditTime}`,
@@ -214,8 +214,8 @@ class authController {
         date: `${day}-${month}-${year} ${reditTime}`,
       });
       return res.json({
-        result: hasMac.confirm == 1 ? 4 : 3,
-        description: hasMac.confirm == 1 ? "alert" : "Не авторизован",
+        result: hasMac.confirm == 0 ? 4 : 3,
+        description: hasMac.confirm == 0 ? "alert" : "Не авторизован",
       });
     } catch (e) {
       console.log(e);
